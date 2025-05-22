@@ -1,0 +1,190 @@
+<div class="dashboard-container">
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="container-fluid">
+      <div class="row align-items-center">
+        <div class="col">
+          <h1 class="dashboard-title">Student Dashboard</h1>
+          <p class="dashboard-subtitle">Track graduation progress and achievements</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="dashboard-main">
+    <div class="container-fluid">
+      
+      <!-- Graduation Track Section -->
+      <section class="graduation-track mb-5">
+        <div class="row">
+          <div class="col-12">
+            <h2 class="section-title">Graduation Track</h2>
+          </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="row mb-4">
+          <div class="col-md-3 col-sm-6 mb-3">
+            <div class="stat-card total">
+              <div class="stat-icon">👥</div>
+              <div class="stat-content">
+                <h3>{{ graduationStats.totalStudents }}</h3>
+                <p>Total Students</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 col-sm-6 mb-3">
+            <div class="stat-card graduated">
+              <div class="stat-icon">🎓</div>
+              <div class="stat-content">
+                <h3>{{ graduationStats.graduated }}</h3>
+                <p>Graduated</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 col-sm-6 mb-3">
+            <div class="stat-card in-progress">
+              <div class="stat-icon">📚</div>
+              <div class="stat-content">
+                <h3>{{ graduationStats.inProgress }}</h3>
+                <p>In Progress</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 col-sm-6 mb-3">
+            <div class="stat-card pending">
+              <div class="stat-icon">⏳</div>
+              <div class="stat-content">
+                <h3>{{ graduationStats.pending }}</h3>
+                <p>Pending</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chart Visualization -->
+        <div class="row">
+          <div class="col-12">
+            <div class="chart-container">
+              <h3 class="chart-title">Graduation Progress Overview</h3>
+              <div class="simple-chart">
+                <div class="chart-bars">
+                  <div class="chart-bar" 
+                       [style.height.%]="(graduationStats.graduated / graduationStats.totalStudents) * 100"
+                       [style.background-color]="'#10b981'">
+                    <span class="bar-label">Graduated<br>{{ graduationStats.graduated }}</span>
+                  </div>
+                  <div class="chart-bar" 
+                       [style.height.%]="(graduationStats.inProgress / graduationStats.totalStudents) * 100"
+                       [style.background-color]="'#3b82f6'">
+                    <span class="bar-label">In Progress<br>{{ graduationStats.inProgress }}</span>
+                  </div>
+                  <div class="chart-bar" 
+                       [style.height.%]="(graduationStats.pending / graduationStats.totalStudents) * 100"
+                       [style.background-color]="'#f59e0b'">
+                    <span class="bar-label">Pending<br>{{ graduationStats.pending }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Badges Section -->
+      <section class="badges-section">
+        <div class="row">
+          <div class="col-12">
+            <div class="section-header d-flex justify-content-between align-items-center mb-4">
+              <h2 class="section-title">Student Achievements</h2>
+              <div class="search-container">
+                <input 
+                  type="text" 
+                  class="form-control search-input" 
+                  placeholder="Search badges..." 
+                  [(ngModel)]="searchTerm">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="row">
+          <div class="col-12">
+            <ul class="nav nav-tabs custom-tabs mb-4">
+              <li class="nav-item">
+                <a class="nav-link" 
+                   [class.active]="activeTab === 'badges'" 
+                   (click)="setActiveTab('badges')">
+                  Badges
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" 
+                   [class.active]="activeTab === 'achievements'" 
+                   (click)="setActiveTab('achievements')">
+                  Achievements
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" 
+                   [class.active]="activeTab === 'progress'" 
+                   (click)="setActiveTab('progress')">
+                  Progress
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Badges Grid -->
+        <div class="row" *ngIf="activeTab === 'badges'">
+          <div class="col-lg-4 col-md-6 mb-4" *ngFor="let badge of filteredBadges">
+            <div class="badge-card" [class.earned]="badge.progress === 100">
+              <div class="badge-header">
+                <div class="badge-icon">{{ badge.icon }}</div>
+                <div class="badge-info">
+                  <h4 class="badge-name">{{ badge.name }}</h4>
+                  <p class="badge-category">{{ badge.category }}</p>
+                </div>
+              </div>
+              
+              <div class="badge-body">
+                <p class="badge-description">{{ badge.description }}</p>
+                
+                <div class="progress-section">
+                  <div class="progress-header">
+                    <span class="progress-label">Progress</span>
+                    <span class="progress-percentage">{{ badge.progress }}%</span>
+                  </div>
+                  <div class="progress custom-progress">
+                    <div class="progress-bar" 
+                         role="progressbar" 
+                         [style.width.%]="badge.progress"
+                         [style.background-color]="getProgressColor(badge.progress)">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="badge-status" *ngIf="badge.earnedDate">
+                  <span class="earned-badge">✅ Earned on {{ badge.earnedDate | date:'mediumDate' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Other Tab Content (Placeholder) -->
+        <div class="row" *ngIf="activeTab !== 'badges'">
+          <div class="col-12">
+            <div class="placeholder-content">
+              <h3>{{ activeTab | titlecase }} Content</h3>
+              <p>This section would contain {{ activeTab }} related information.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
